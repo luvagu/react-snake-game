@@ -17,7 +17,7 @@ function App() {
 	const animate = useCallback((currentTS) => {
 			if (checkDeath(snakeBody, foodBlock)) {
 				if (window.confirm('You lose!, Restart game?')) {
-					window.location = '/'
+					window.location = '/react-snake-game/'
 				}
 				return
 			}
