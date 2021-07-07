@@ -1,18 +1,22 @@
-import { useEffect, useRef, useState } from 'react'
-import { SNAKE_SPEED, updateSnakeCoords } from './utils/snake'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { SNAKE_SPEED, updateSnake, onSnake } from './utils/snake'
+import { getRandomFoodCoords } from './utils/food'
 
 import Snake from './components/Snake'
 import Food from './components/Food'
 
 function App() {
 	const [snakeBody, setSnakeBody] = useState([{ x: 11, y: 11 }])
-	const [foodCoords, setFoodCoords] = useState({ x: 1, y: 1 })
+	const [foodBlock, setFoodBlock] = useState(getRandomFoodCoords(snakeBody))
+
+	// const snakeBody = useRef([{ x: 11, y: 11 }])
+	// const foodBlock = useRef(getRandomFoodCoords(snakeBody))
 
 	const inputDirection = useRef({ x: 0, y: 0 })
 	const requestRef = useRef()
 	const previousTimeRef = useRef(0)
 
-	const animate = currentTS => {
+	const animate = useCallback((currentTS) => {
 		requestRef.current = window.requestAnimationFrame(animate)
 
 		const secondsSinceLastRender = (currentTS - previousTimeRef.current) / 1000
@@ -21,8 +25,15 @@ function App() {
 
 		previousTimeRef.current = currentTS
 
-		setSnakeBody([...updateSnakeCoords(inputDirection.current, snakeBody)])
-	}
+		
+
+		if (onSnake(snakeBody, foodBlock)) {
+			// foodBlock.current = getRandomFoodCoords(snakeBody)
+			setFoodBlock(getRandomFoodCoords(snakeBody))
+		}
+		
+		setSnakeBody([...updateSnake(inputDirection.current, snakeBody, foodBlock)])
+	}, [snakeBody, foodBlock])
 
 	const userInputDirection = e => {
 		switch (e.key) {
@@ -42,13 +53,22 @@ function App() {
 				if (inputDirection.current.x !== 0) break
 				inputDirection.current = { x: 1, y: 0 }
 				break
+			default:
+				break
 		}
 	}
 
+	// useEffect(() => {
+	// 	if (onSnake(snakeBody, foodBlock.current)) {
+	// 		// setFoodBlock(getRandomFoodCoords(snakeBody))
+	// 		foodBlock.current = getRandomFoodCoords(snakeBody)
+	// 	}
+	// })
+
 	useEffect(() => {
 		requestRef.current = window.requestAnimationFrame(animate)
-		return () => cancelAnimationFrame(requestRef.current)
-	}, [])
+		return () => window.cancelAnimationFrame(requestRef.current)
+	}, [animate])
 
 	useEffect(() => {
 		window.addEventListener('keydown', userInputDirection)
@@ -60,7 +80,7 @@ function App() {
 			{snakeBody.map((segment, idx) => (
 				<Snake key={idx} coords={segment} />
 			))}
-			<Food coords={foodCoords} />
+			{foodBlock && <Food coords={foodBlock} />}
 		</div>
 	)
 }
