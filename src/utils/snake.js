@@ -3,12 +3,7 @@ export const SNAKE_SPEED = 4
 export const EXPANSION_RATE = 1
 
 export function updateSnake(inputDirection, snakeBody, foodBlock) {
-	// console.log('snakeBody', snakeBody[0]);
-	// console.log('foodBlock', foodBlock);
-	console.log('onSnake(snakeBody, foodBlock)', onSnake(snakeBody, foodBlock));
-
 	if (onSnake(snakeBody, foodBlock)) {
-		console.log('adding segment');
 		snakeBody = addSegments(EXPANSION_RATE, snakeBody)
 	}
 
@@ -23,11 +18,18 @@ export function updateSnake(inputDirection, snakeBody, foodBlock) {
 }
 
 export function onSnake(snakeBody, foodBlock, { ignoreHead = false } = {}) {
-	// console.log('snakeBody', snakeBody);
 	return snakeBody.some((segment, idx) => {
-		// if ((ignoreHead && idx === 0) || !foodBlock) return false
+		if (ignoreHead && idx === 0) return false
 		return equalCoords(segment, foodBlock)
 	})
+}
+
+export function snakeIntersection(snakeBody) {
+	return onSnake(snakeBody, snakeBody[0], { ignoreHead: true })
+}
+
+export function getSnakeHead(snakeBody) {
+  return snakeBody[0]
 }
 
 function equalCoords(pos1, pos2) {

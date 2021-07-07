@@ -4,6 +4,7 @@ import { getRandomFoodCoords } from './utils/food'
 
 import Snake from './components/Snake'
 import Food from './components/Food'
+import { checkDeath } from './utils/game'
 
 function App() {
 	const [snakeBody, setSnakeBody] = useState([{ x: 11, y: 11 }])
@@ -17,6 +18,13 @@ function App() {
 	const previousTimeRef = useRef(0)
 
 	const animate = useCallback((currentTS) => {
+		if (checkDeath(snakeBody, foodBlock)) {
+			if (window.confirm('You lose!, Restart game?')) {
+				window.location = '/'
+			}
+			return
+		}
+
 		requestRef.current = window.requestAnimationFrame(animate)
 
 		const secondsSinceLastRender = (currentTS - previousTimeRef.current) / 1000
@@ -31,7 +39,7 @@ function App() {
 			// foodBlock.current = getRandomFoodCoords(snakeBody)
 			setFoodBlock(getRandomFoodCoords(snakeBody))
 		}
-		
+
 		setSnakeBody([...updateSnake(inputDirection.current, snakeBody, foodBlock)])
 	}, [snakeBody, foodBlock])
 
