@@ -24,16 +24,29 @@ body {
 	display: grid;
 	grid-template-columns: repeat(21, 1fr);
 	grid-template-rows: repeat(21, 1fr);
-  /* grid-gap: 1px;
-  padding: 1px; */
 }
 
 .snake {
+	display: grid;
+	place-items: center;
+	position: relative;
   background-color: hsl(200, 100%, 50%);
   border: .25vmin solid black;
 }
 
+.snake::before {
+	content: "🐍";
+}
+
 .food {
+	display: grid;
+	place-items: center;
+	position: relative;
   background-color: hsl(50, 100%, 50%);
   border: .25vmin solid black;
+	border-radius: 50%;
+}
+
+.food::before {
+	content: "🍎";
 }
