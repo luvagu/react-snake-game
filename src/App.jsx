@@ -10,38 +10,35 @@ function App() {
 	const [snakeBody, setSnakeBody] = useState([{ x: 11, y: 11 }])
 	const [foodBlock, setFoodBlock] = useState(getRandomFoodCoords(snakeBody))
 
-	// const snakeBody = useRef([{ x: 11, y: 11 }])
-	// const foodBlock = useRef(getRandomFoodCoords(snakeBody))
-
 	const inputDirection = useRef({ x: 0, y: 0 })
 	const requestRef = useRef()
 	const previousTimeRef = useRef(0)
 
 	const animate = useCallback((currentTS) => {
-		if (checkDeath(snakeBody, foodBlock)) {
-			if (window.confirm('You lose!, Restart game?')) {
-				window.location = '/'
+			if (checkDeath(snakeBody, foodBlock)) {
+				if (window.confirm('You lose!, Restart game?')) {
+					window.location = '/'
+				}
+				return
 			}
-			return
-		}
 
-		requestRef.current = window.requestAnimationFrame(animate)
+			requestRef.current = window.requestAnimationFrame(animate)
 
-		const secondsSinceLastRender = (currentTS - previousTimeRef.current) / 1000
+			const secondsSinceLastRender =
+				(currentTS - previousTimeRef.current) / 1000
 
-		if (secondsSinceLastRender < 1 / SNAKE_SPEED) return
+			if (secondsSinceLastRender < 1 / SNAKE_SPEED) return
 
-		previousTimeRef.current = currentTS
+			previousTimeRef.current = currentTS
 
-		
+			if (onSnake(snakeBody, foodBlock)) {
+				setFoodBlock(getRandomFoodCoords(snakeBody))
+			}
 
-		if (onSnake(snakeBody, foodBlock)) {
-			// foodBlock.current = getRandomFoodCoords(snakeBody)
-			setFoodBlock(getRandomFoodCoords(snakeBody))
-		}
-
-		setSnakeBody([...updateSnake(inputDirection.current, snakeBody, foodBlock)])
-	}, [snakeBody, foodBlock])
+			setSnakeBody([
+				...updateSnake(inputDirection.current, snakeBody, foodBlock),
+			])
+		}, [snakeBody, foodBlock])
 
 	const userInputDirection = e => {
 		switch (e.key) {
@@ -65,13 +62,6 @@ function App() {
 				break
 		}
 	}
-
-	// useEffect(() => {
-	// 	if (onSnake(snakeBody, foodBlock.current)) {
-	// 		// setFoodBlock(getRandomFoodCoords(snakeBody))
-	// 		foodBlock.current = getRandomFoodCoords(snakeBody)
-	// 	}
-	// })
 
 	useEffect(() => {
 		requestRef.current = window.requestAnimationFrame(animate)
