@@ -15,6 +15,7 @@ body {
 	justify-content: center;
 	align-items: center;
 	background-color: black;
+	position: relative;
 }
 
 .board {
@@ -30,23 +31,41 @@ body {
 	display: grid;
 	place-items: center;
 	position: relative;
-  background-color: hsl(200, 100%, 50%);
-  border: .25vmin solid black;
+	background-color: hsl(200, 100%, 50%);
+	border: 0.25vmin solid black;
 }
 
 .snake::before {
-	content: "🐍";
+	content: '🐍';
 }
 
 .food {
 	display: grid;
 	place-items: center;
 	position: relative;
-  background-color: hsl(50, 100%, 50%);
-  border: .25vmin solid black;
+	background-color: hsl(50, 100%, 50%);
+	border: 0.25vmin solid black;
 	border-radius: 50%;
 }
 
 .food::before {
-	content: "🍎";
+	content: '🍎';
+}
+
+.floating-arrows {
+	position: absolute;
+	bottom: 2rem;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.floating-arrows button {
+	cursor: pointer;
+	padding: .8rem;
+	opacity: .75;
+	/* background-color: whitesmoke; */
 }

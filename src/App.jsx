@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
 import { SNAKE_SPEED, updateSnake, onSnake } from './utils/snake'
 import { getRandomFoodCoords } from './utils/food'
+import { checkDeath } from './utils/game'
 
 import Snake from './components/Snake'
 import Food from './components/Food'
-import { checkDeath } from './utils/game'
+import FloatingArrows from './components/FloatingArrows'
 
 function App() {
 	const [snakeBody, setSnakeBody] = useState([{ x: 11, y: 11 }])
@@ -14,7 +15,8 @@ function App() {
 	const requestRef = useRef()
 	const previousTimeRef = useRef(0)
 
-	const animate = useCallback((currentTS) => {
+	const animate = useCallback(
+		currentTS => {
 			if (checkDeath(snakeBody, foodBlock)) {
 				if (window.confirm('You lose!, Restart game?')) {
 					window.location = '/react-snake-game/'
@@ -38,10 +40,12 @@ function App() {
 			setSnakeBody([
 				...updateSnake(inputDirection.current, snakeBody, foodBlock),
 			])
-		}, [snakeBody, foodBlock])
+		},
+		[snakeBody, foodBlock]
+	)
 
-	const userInputDirection = e => {
-		switch (e.key) {
+	const userInputDirection = (e, name = false) => {
+		switch (name ? name : e.key) {
 			case 'ArrowUp':
 				if (inputDirection.current.y !== 0) break
 				inputDirection.current = { x: 0, y: -1 }
@@ -74,12 +78,15 @@ function App() {
 	}, [])
 
 	return (
-		<div className='board'>
-			{snakeBody.map((segment, idx) => (
-				<Snake key={idx} coords={segment} />
-			))}
-			{foodBlock && <Food coords={foodBlock} />}
-		</div>
+		<Fragment>
+			<div className='board'>
+				{snakeBody.map((segment, idx) => (
+					<Snake key={idx} coords={segment} />
+				))}
+				{foodBlock && <Food coords={foodBlock} />}
+			</div>
+			<FloatingArrows handler={userInputDirection} />
+		</Fragment>
 	)
 }
 
